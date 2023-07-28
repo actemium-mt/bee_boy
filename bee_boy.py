@@ -28,16 +28,14 @@ def find_similar_items_smart(input,data_base):
 
 def main():
     df_historique_panne = pd.read_excel('Nouveau document texte.xlsx') 
-    liste_commentaire  = df_historique_panne["COMMENTAIRE "].tolist()
-    liste_commentaire_non_null = []
-    for i in range(len(liste_commentaire)):
-        if str(liste_commentaire[i]) != 'nan':
-            liste_commentaire_non_null.append(liste_commentaire[i])
-    resultats = process.extract("probleme", liste_commentaire_non_null, limit=4000)
+    liste_commentaire  = df_historique_panne["commentaires"].tolist()
+    liste_designation = df_historique_panne["designation"].tolist()
+    liste_description = df_historique_panne["descriptions"].tolist()
+    liste_organe_machine = df_historique_panne["organe_machine"].tolist()
     liste_commentaire_final = []
-    for resultat in resultats:
-        liste_commentaire_final.append(resultat[0])
-    api_key ="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"
+    for i in range(len(liste_commentaire)):
+        liste_commentaire_final.append("organe machine : "+str(liste_organe_machine[i])+"designation de la panne : "+str(liste_designation[i])+" descriptions de la panne : "+str(liste_description[i])+" commentaire sur la panne : "+str(liste_commentaire[i]))
+    api_key ="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"
     openai.api_key = api_key
     st.title("Bee Boy actemium assistant")
     if "messages" not in st.session_state:
@@ -52,8 +50,11 @@ def main():
         prompt = "est ce que ceette phrase : " +user_input+" contient des  mots techniques en relation avec la maintenace industrielle? repond seulement par oui ou non"
         response1 = get_completion(prompt)
         if "oui" in response1.lower():
-            similar_data  = find_similar_items_smart(user_input,liste_commentaire_final)
-            prompt = "en se basant seulement sur ça " + str(similar_data) + " tire tout les actions les plus pertinentes en relation avec"+user_input+"et presente les comme des listes d'actions qu'on peut faire en reformulant une reponse technique et developpent bien chaque actions"
+            
+            key_words = get_completion("detecte les mots clés de cette phrase : " +user_input+" .retourne seulement les mots clés")
+            print(key_words)
+            similar_data  = find_similar_items_smart(key_words,liste_commentaire_final)
+            prompt = "en se basant seulement sur ça " + str(similar_data) + " c'est quoi les actions les plus pertinentes à realise en relation avec"+user_input+"et presente les comme des listes d'actions qu'on peut faire en reformulant une reponse technique et developpent bien chaque actions"
             response = get_completion(prompt)
         else:
             response = get_completion(user_input)
