@@ -37,7 +37,7 @@ def main():
     liste_commentaire_final = []
     for resultat in resultats:
         liste_commentaire_final.append(resultat[0])
-    api_key ="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"
+    api_key ="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"
     openai.api_key = api_key
     st.title("Bee Boy actemium assistant")
     if "messages" not in st.session_state:
