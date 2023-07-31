@@ -53,20 +53,22 @@ def main():
 
         user_input = st.chat_input()
         if user_input:
+            st.toast('Vérification en cours...')
             st.session_state.messages.append({"role": "user", "message": user_input,"content":""})
             response = ""
-            prompt = "est ce que ceette phrase : " +user_input+" contient des  mots techniques en relation avec la maintenace industrielle? repond seulement par oui ou non"
+            prompt = "est ce que cette phrase : " +user_input+" contient des  mots techniques en relation avec la maintenace industrielle? repond seulement par oui ou non"
             response1 = get_completion(prompt)
             if "oui" in response1.lower():
-                
+                st.toast('Recherche des pannes similaires... ',icon = "🤖")
                 key_words = get_completion("detecte les mots clés de cette phrase : " +user_input+" .retourne seulement les mots clés")
                 print(key_words)
                 similar_data  = find_similar_items_smart(key_words,liste_commentaire_final)
                 prompt = "en se basant seulement sur ça " + str(similar_data) + "tire les actions réalisées pour resoudre le probleme : "+user_input+". je veux une reponse en bullet point, bien developpée et detaillée"
                 response = get_completion(prompt)
                 print(response)
+                st.toast('Ready!',icon="🤖")
             else:
-                
+                st.toast("c'est pas une question technique liée à la maintenance industrielle",icon = "😵")
                 response = "Je suis votre assistant de maintenance, et je peux répondre uniquement à des questions techniques liées à la maintenance industrielle."
             st.session_state.messages.append({"role": "assistant", "message":response,"content":""})
         if "messages" in st.session_state:
