@@ -3,6 +3,7 @@ from fuzzywuzzy import fuzz, process
 import openai
 import streamlit as st
 import streamlit_chat
+#testmerge
 
 def get_completion(prompt):
     response = openai.Completion.create(
@@ -27,6 +28,7 @@ def find_similar_items_smart(input,data_base):
     return liste_elements
 
 def main():
+
     correct_password = "lalala"
     password = st.text_input("Entrer le mot de passe :", type="password")
     
@@ -47,6 +49,7 @@ def main():
             first_txt = """Salut ! 👋 Je suis là pour transformer le dépannage en une tâche facile pour vous. Parlons de votre problème et découvrons les meilleures solutions ensemble."""
             st.session_state.messages = [{"role": "assistant", "message": first_txt,"content" :""}]
             
+
 
         user_input = st.chat_input()
         if user_input:
