@@ -62,11 +62,12 @@ def main():
                 key_words = get_completion("detecte les mots clés de cette phrase : " +user_input+" .retourne seulement les mots clés")
                 print(key_words)
                 similar_data  = find_similar_items_smart(key_words,liste_commentaire_final)
-                prompt = "en se basant seulement sur ça " + str(similar_data) + " c'est quoi les actions faites par les techniciens pour : "+user_input+"? repond par des une liste de point en resumant chaque point mais en gardant les mots cmes technique utilises"
+                prompt = "en se basant seulement sur ça " + str(similar_data) + "tire les actions réalisées pour resoudre le probleme : "+user_input+". je veux une reponse en bullet point, bien developpée et detaillée"
                 response = get_completion(prompt)
                 print(response)
             else:
-                response = get_completion(user_input)
+                
+                response = "Je suis votre assistant de maintenance, et je peux répondre uniquement à des questions techniques liées à la maintenance industrielle."
             st.session_state.messages.append({"role": "assistant", "message":response,"content":""})
         if "messages" in st.session_state:
             for message in st.session_state.messages:
