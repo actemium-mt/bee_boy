@@ -9,7 +9,7 @@ def get_completion(prompt):
         model="text-davinci-003",
         prompt=prompt,
         temperature=0.9,
-        max_tokens=1000,
+        max_tokens=500,
         top_p=1,
         frequency_penalty=0,
         presence_penalty=0.6,
@@ -19,7 +19,7 @@ def get_completion(prompt):
 
 def find_similar_items_smart(input,data_base):
     
-    resultats = process.extract(input, data_base, limit=10)
+    resultats = process.extract(input, data_base, limit=9)
     liste_elements = []
     for resultat in resultats:
         liste_elements.append(resultat[0])
@@ -40,7 +40,7 @@ def main():
         liste_commentaire_final = []
         for i in range(len(liste_commentaire)):
             liste_commentaire_final.append("organe machine : "+str(liste_organe_machine[i])+"designation de la panne : "+str(liste_designation[i])+" descriptions de la panne : "+str(liste_description[i])+" commentaire sur la panne : "+str(liste_commentaire[i]))
-        #api_key ="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"
+        
         openai.api_key = api_key
         st.title("Bee Boy actemium assistant")
         if "messages" not in st.session_state:
@@ -59,8 +59,9 @@ def main():
                 key_words = get_completion("detecte les mots clés de cette phrase : " +user_input+" .retourne seulement les mots clés")
                 print(key_words)
                 similar_data  = find_similar_items_smart(key_words,liste_commentaire_final)
-                prompt = "en se basant seulement sur ça " + str(similar_data) + " c'est quoi les actions les plus pertinentes à realise en relation avec"+user_input+"et presente les comme des listes d'actions qu'on peut faire en reformulant une reponse technique et developpent bien chaque actions"
+                prompt = "en se basant seulement sur ça " + str(similar_data) + " c'est quoi les actions faites par les techniciens pour : "+user_input+"? repond par des une liste de point en resumant chaque point mais en gardant les mots cmes technique utilises"
                 response = get_completion(prompt)
+                print(response)
             else:
                 response = get_completion(user_input)
             st.session_state.messages.append({"role": "assistant", "message":response,"content":""})
