@@ -64,7 +64,8 @@ def main():
                 key_words = get_completion("detecte les mots clés de cette phrase : " +user_input+" .retourne seulement les mots clés")
                 print(key_words)
                 similar_data  = find_similar_items_smart(key_words,liste_commentaire_final)
-                prompt = "en se basant seulement sur cet historique de panne et de actions faites : " + str(similar_data) + " tire les actions réalisées en relation avec  le probleme : "+user_input+". je veux une reponse en bullet point bien propre"
+                print(similar_data)
+                prompt = "en se basant seulement sur cet historique de panne et de actions faites : " + str(similar_data) + " tire toutes les actions réalisées en relation avec  le probleme : "+user_input+". je veux une reponse en bullet point reformulé et bien propre"
                 response = get_completion(prompt)
                 print(response)
                 
