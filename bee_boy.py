@@ -45,6 +45,7 @@ def main():
         
         openai.api_key = api_key
         st.title("Bee Boy actemium assistant")
+        st.title("version 1.0")
         if "messages" not in st.session_state:
             first_txt = """Salut ! 👋 Je suis là pour transformer le dépannage en une tâche facile pour vous. Parlons de votre problème et découvrons les meilleures solutions ensemble."""
             st.session_state.messages = [{"role": "assistant", "message": first_txt,"content" :""}]
@@ -62,9 +63,10 @@ def main():
                 key_words = get_completion("detecte les mots clés de cette phrase : " +user_input+" .retourne seulement les mots clés")
                 print(key_words)
                 similar_data  = find_similar_items_smart(key_words,liste_commentaire_final)
-                prompt = "en se basant seulement sur ça " + str(similar_data) + "tire les actions réalisées pour resoudre le probleme : "+user_input+". je veux une reponse en bullet point, bien developpée et detaillée"
+                prompt = "en se basant seulement sur cet historique de panne et de actions faites : " + str(similar_data) + " tire les actions réalisées en relation avec  le probleme : "+user_input+". je veux une reponse en bullet point bien propre"
                 response = get_completion(prompt)
                 print(response)
+                
             else:
                 
                 response = "Je suis votre assistant de maintenance, et je peux répondre uniquement à des questions techniques liées à la maintenance industrielle."
