@@ -32,11 +32,13 @@ def find_similar_items_smart(input,data_base,liste_commentaire,liste_description
     liste_elements_description = []
     liste_elements_commentaire = []
     for resultat in resultats_description:
-        liste_elements_description.append(resultat[0])
-        print(resultat[1])
+        if resultat[1]>60:
+            liste_elements_description.append(resultat[0])
+        
     for resultat in resultats_commentaire:
-        liste_elements_commentaire.append(resultat[0])
-        print(resultat[1])
+        if resultat[1]>60:
+            liste_elements_commentaire.append(resultat[0])
+        
     liste_elements = []
     for item in liste_elements_description:
         index = get_index(item,liste_description)
