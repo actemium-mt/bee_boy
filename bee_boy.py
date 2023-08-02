@@ -68,7 +68,7 @@ def main():
         
         openai.api_key = api_key
         st.title("Bee Boy actemium assistant")
-        st.title("version 1.0")
+        st.title("version 1.1")
         if "messages" not in st.session_state:
             first_txt = """Salut ! 👋 Je suis là pour transformer le dépannage en une tâche facile pour vous. Parlons de votre problème et découvrons les meilleures solutions ensemble."""
             st.session_state.messages = [{"role": "assistant", "message": first_txt,"content" :""}]
