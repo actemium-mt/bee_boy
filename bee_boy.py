@@ -44,10 +44,10 @@ def find_similar_items_smart(input,data_base,liste_commentaire,liste_description
     liste_elements = []
     for item in liste_elements_description:
         index = get_index(item,liste_description)
-        liste_elements.append(data_base[index])
+        liste_elements.append(str(data_base[index])+"||")
     for item in liste_elements_commentaire:
         index = get_index(item,liste_commentaire)
-        liste_elements.append(data_base[index])
+        liste_elements.append(str(data_base[index])+"||")
 
     
     return liste_elements
@@ -78,7 +78,7 @@ def main():
         openai.api_key = api_key
         st.title("Bee Boy actemium assistant")
         st.image(image)
-        st.title("version 1.1")
+        st.title("version 1.2")
         if "messages" not in st.session_state:
             
             st.session_state.messages = [{"role": "assistant", "message": first_txt,"content" :""}]
@@ -94,13 +94,24 @@ def main():
             response1 = get_completion(prompt)
             if "oui" in response1.lower():
                 st.toast('Recherche des pannes similaires... ',icon = "🤖")
-                key_words = get_completion("detecte les mots clés de cette phrase : " +user_input+" .retourne seulement les mots clés")
+                key_words = get_completion("detecte les mots clés de cette phrase : " +user_input+" .retourne seulement la liste des mots clés")
                 print(key_words)
-                similar_data  = find_similar_items_smart(key_words,liste_commentaire_final,liste_commentaire,liste_description)
-                
-                prompt = "en se basant seulement sur cet historique de panne et de actions faites : " + str(similar_data) + " tire toutes les actions réalisées en relation avec  le probleme : "+user_input+". je veux la liste  avec les actions realise reformulés pour le probleme.LISTE EN BULLET POINT AVEC DES SAUTS DE LIGNES"
-                response = get_completion(prompt)
+                key_words_list = key_words.split(",")
+                important_key_words_list = []
+                for word in key_words_list:
+                    if 'panne' not in word.lower() and word not in '1 2 3 4 5 6 7 8 9' and 'prob' not in word.lower() and 'retour' not in word.lower() and 'erreur' not in word.lower() and 'machine' not in word.lower():
+                        important_key_words_list.append(word)
+                important_key_words = ' '.join(important_key_words_list)
+                print(important_key_words)
+                similar_data  = find_similar_items_smart(important_key_words,liste_commentaire_final,liste_commentaire,liste_description)
+                print(similar_data)
+                prompt = "en se basant seulement sur ces donnees:" + str(similar_data) + "tire toutes les actions faites (fait) en relation avec "+user_input
+
+                response1 = get_completion(prompt)
+                prompt2 = str(response1) + " reformule cette reponse en me donnant une liste (bullet point) des actions faites pour le probleme " + user_input
+                response = get_completion(prompt2)
                 print(response)
+                
                 
             else:
                 st.toast("c'est pas une question technique liée à la maintenance industrielle",icon = "😵")
