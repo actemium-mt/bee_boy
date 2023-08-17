@@ -3,3 +3,4 @@ fuzzywuzzy
 openai
 streamlit-chat
 openpyxl
+st-star-rating
