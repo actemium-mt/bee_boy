@@ -7,6 +7,7 @@ from streamlit_star_rating import st_star_rating
 from PIL import Image
 import csv
 from joblib import *
+from io import BytesIO
 #testmerge
 
 def get_completion(prompt):
@@ -67,6 +68,10 @@ def df_to_list(df):
     return list
 
 def main():
+    
+    
+    
+
     sub_df = pd.DataFrame({})
     image = Image.open('Boy-removebg-preview.png')
     correct_password = "lalala"
@@ -89,95 +94,112 @@ def main():
     
     text_utile = extract(sub_df)
     if password == correct_password and len(api_key)>50:
-        openai.api_key = api_key
-        st.title("Bee Boy actemium assistant")
-        st.image(image)
-        st.title("version 1.2")
-        machines = st.multiselect("Machine(s):",liste_machine)
-        expanded = not((len(machines) == 0))
-        with st.expander("",expanded=expanded):
+        page = st.sidebar.selectbox("Menu",("Bee Boy", "Avis"))
         
-            set_oragane = set()
-            for couple in mapping_organe_machine:
-                if couple[0] in machines:
-                    set_oragane = set_oragane.union(set(couple[1]))
-            liste_organe_of_selected_machine = list(set_oragane)
-            organes = st.multiselect("Organe machine",liste_organe_of_selected_machine)
-        df_inter = df_historique[df_historique.apply(lambda row: row['N°SAP_Designation'] in machines, axis=1)]
-        sub_df = df_inter[df_inter.apply(lambda row: row['ORGANE MACHINE '] in organes, axis=1)]
-        
-        sub_df_list = df_to_list(sub_df)
-        if len(sub_df_list)//10 == 0:
-            text_utile = extract(sub_df_list)
-        else:
-            st.success("Les données qui permettent de répondre à vos questions sont réparties sur plusieurs groupes. Si Bee Boy ne répond pas à votre question, essayez de passer au groupe suivant à l'aide du compteur ci-dessous (cliquer sur + ou -). Si aucun des groupes ne repondent à votre question, essayez de la formuler autrement.")
-            number_of_sub_df = st.number_input("Compteur",min_value=1,max_value=len(sub_df_list)//10+1)
-            if number_of_sub_df == len(sub_df_list)//10+1:
-                text_utile = extract(sub_df_list[10*(number_of_sub_df-1):])
-                print(str(10*(number_of_sub_df-1)) + "->" + str(len(sub_df_list)))
-                
-            elif number_of_sub_df == 1:
-                text_utile = extract(sub_df_list[:9])
-                print( "0 -> 9")
-                
+        if page ==  "Bee Boy":
+
+            openai.api_key = api_key
+            st.title("Bee Boy actemium assistant")
+            st.image(image)
+            st.title("version 1.3")
+            machines = st.multiselect("Machine(s):",liste_machine)
+            expanded = not((len(machines) == 0))
+            with st.expander("",expanded=expanded):
+            
+                set_oragane = set()
+                for couple in mapping_organe_machine:
+                    if couple[0] in machines:
+                        set_oragane = set_oragane.union(set(couple[1]))
+                liste_organe_of_selected_machine = list(set_oragane)
+                organes = st.multiselect("Organe machine",liste_organe_of_selected_machine)
+            df_inter = df_historique[df_historique.apply(lambda row: row['N°SAP_Designation'] in machines, axis=1)]
+            sub_df = df_inter[df_inter.apply(lambda row: row['ORGANE MACHINE '] in organes, axis=1)]
+            
+            sub_df_list = df_to_list(sub_df)
+            if len(sub_df_list)//10 == 0:
+                text_utile = extract(sub_df_list)
             else:
-                text_utile = extract(sub_df_list[10*(number_of_sub_df-1):10*number_of_sub_df])
-                print(str(10*(number_of_sub_df-1)) + "->" + str(10*number_of_sub_df))
+                st.success("Les données qui permettent de répondre à vos questions sont réparties sur plusieurs groupes. Si Bee Boy ne répond pas à votre question, essayez de passer au groupe suivant à l'aide du compteur ci-dessous (cliquer sur + ou -). Si aucun des groupes ne repondent à votre question, essayez de la formuler autrement.")
+                number_of_sub_df = st.number_input("Compteur",min_value=1,max_value=len(sub_df_list)//10+1)
+                if number_of_sub_df == len(sub_df_list)//10+1:
+                    text_utile = extract(sub_df_list[10*(number_of_sub_df-1):])
+                    print(str(10*(number_of_sub_df-1)) + "->" + str(len(sub_df_list)))
+                    
+                elif number_of_sub_df == 1:
+                    text_utile = extract(sub_df_list[:9])
+                    print( "0 -> 9")
+                    
+                else:
+                    text_utile = extract(sub_df_list[10*(number_of_sub_df-1):10*number_of_sub_df])
+                    print(str(10*(number_of_sub_df-1)) + "->" + str(10*number_of_sub_df))
+                    
+                
+                
+            
                 
             
             
-           
             
-        
-        
-        
-        
-        
-        if "messages" not in st.session_state:
             
-            st.session_state.messages = [{"role": "assistant", "message": first_txt,"content" :""}]
             
+            if "messages" not in st.session_state:
+                
+                st.session_state.messages = [{"role": "assistant", "message": first_txt,"content" :""}]
+                
 
-        response = ""
-        user_input = st.chat_input()
-        if user_input:
-            prompt = "En ce basant uniquement sur ces données : ( " + text_utile + " ) reponds à la question suivante : " + user_input
-            response = get_completion(prompt)
-            st.toast('Vérification en cours...')
-            st.session_state.messages.append({"role": "user", "message": user_input,"content":""})
-            
-            
-            st.session_state.messages.append({"role": "assistant", "message":response,"content":""})
+            response = ""
+            user_input = st.chat_input()
+            if user_input:
+                prompt = "En ce basant uniquement sur ces données : ( " + text_utile + " ) reponds à la question suivante : " + user_input
+                response = get_completion(prompt)
+                st.toast('Vérification en cours...')
+                st.session_state.messages.append({"role": "user", "message": user_input,"content":""})
+                
+                
+                st.session_state.messages.append({"role": "assistant", "message":response,"content":""})
 
-        if "messages" in st.session_state:
-            i = 0
-            j = 0
-            
-            for message in st.session_state.messages: 
-                with st.chat_message(message["role"]):
-                    st.write(message["message"])
-                    if message["message"] != first_txt and message["role"] == "assistant" and message["message"]!=sorry_text:
-                        form_key = "rating_form" + str(j+1000)
-                        with st.form(key = form_key):
-                            col1,col2 = st.columns(2)
-                            with col1:
-                                st.markdown("<h3>Commentaire</h3>", unsafe_allow_html=True)
-                                commentaire = st.text_area("",key = i,placeholder = "Que pensez-vous de la réponse de Bee Boy",label_visibility="collapsed")
-                            with col2:
-                                stars = st_star_rating("Avis", maxValue=5, defaultValue=1, key=i+1,emoticons = True)
-                            submitted = st.form_submit_button("Envoyer")
-                            if submitted:
-                                commentaire_liste.append(commentaire)
-                                avis_liste.append(stars)
-                                question_liste.append(st.session_state.messages[j-1]["message"])
-                                reponse_liste.append(message["message"])
-                                new_df_commentaire = pd.DataFrame({'Question':question_liste,'Réponse':reponse_liste,'Commentaire':commentaire_liste,'Avis':avis_liste})
-                                new_df_commentaire.to_excel("commentaire.xlsx")
-                                st.success("Merci pour votre retour, c'est très important pour l'amélioration de votre assistant préféré Bee Boy! 😀")
+            if "messages" in st.session_state:
+                i = 0
+                j = 0
+                
+                for message in st.session_state.messages: 
+                    with st.chat_message(message["role"]):
+                        st.write(message["message"])
+                        if message["message"] != first_txt and message["role"] == "assistant" and message["message"]!=sorry_text:
+                            form_key = "rating_form" + str(j+1000)
+                            with st.form(key = form_key):
+                                col1,col2 = st.columns(2)
+                                with col1:
+                                    st.markdown("<h3>Commentaire</h3>", unsafe_allow_html=True)
+                                    commentaire = st.text_area("",key = i,placeholder = "Que pensez-vous de la réponse de Bee Boy",label_visibility="collapsed")
+                                with col2:
+                                    stars = st_star_rating("Avis", maxValue=5, defaultValue=1, key=i+1,emoticons = True)
+                                submitted = st.form_submit_button("Envoyer")
+                                if submitted:
+                                    commentaire_liste.append(commentaire)
+                                    avis_liste.append(stars)
+                                    question_liste.append(st.session_state.messages[j-1]["message"])
+                                    reponse_liste.append(message["message"])
+                                    new_df_commentaire = pd.DataFrame({'Question':question_liste,'Réponse':reponse_liste,'Commentaire':commentaire_liste,'Avis':avis_liste})
+                                    new_df_commentaire.to_excel("commentaire.xlsx")
+                                    st.success("Merci pour votre retour, c'est très important pour l'amélioration de votre assistant préféré Bee Boy! 😀")
 
-                i=i+2
-                j=j+1
-            
+                    i=i+2
+                    j=j+1
+        else:
+            st.write(df_commentaire) 
+            # download button 2 to download dataframe as xlsx
+            buffer = BytesIO()
+            with pd.ExcelWriter(buffer,engine='xlsxwriter') as writer:
+                # Write each dataframe to a different worksheet.
+                df_commentaire.to_excel(writer, index=False)
+                writer.save()
+                download = st.download_button(
+                    label="Download data as Excel",
+                    data=buffer,
+                    file_name='commentaire.xlsx',
+                    mime='application/vnd.ms-excel'
+                )
 
     else:
         st.error("Mot de passe incorrecte ou clé invalide.")
