@@ -54,11 +54,18 @@ def find_similar_items_smart(input,data_base,liste_commentaire,liste_description
     
     return liste_elements
 
-def extract(df):
+def extract(list):
     txt = ""
-    for index,row in df.iterrows():
-        txt = txt  + "Probleme : " + str(row["DESCIPTIONS "]) + " / " + " Machine : " + str(row["N°SAP_Designation"]) + " / " + " Organe Machine : " + str(row["ORGANE MACHINE "]) + " / " + " Commentaire : " + str(row["COMMENTAIRES"]) + " ||| "
+    for item in list:
+        txt = txt  + str(item)
     return txt
+
+def df_to_list(df):
+    list = []
+    for index,row in df.iterrows():
+        list.append("Probleme : " + str(row["DESCIPTIONS "]) + " / " + " Machine : " + str(row["N°SAP_Designation"]) + " / " + " Organe Machine : " + str(row["ORGANE MACHINE "]) + " / " + " Commentaire : " + str(row["COMMENTAIRES"]) + " ||| ")
+    return list
+
 def main():
     sub_df = pd.DataFrame({})
     image = Image.open('Boy-removebg-preview.png')
@@ -99,7 +106,29 @@ def main():
         df_inter = df_historique[df_historique.apply(lambda row: row['N°SAP_Designation'] in machines, axis=1)]
         sub_df = df_inter[df_inter.apply(lambda row: row['ORGANE MACHINE '] in organes, axis=1)]
         
-        text_utile = extract(sub_df)
+        sub_df_list = df_to_list(sub_df)
+        if len(sub_df_list)//10 == 0:
+            text_utile = extract(sub_df_list)
+        else:
+            st.success("Les données qui permettent de répondre à vos questions sont réparties sur plusieurs groupes. Si Bee Boy ne répond pas à votre question, essayez de passer au groupe suivant à l'aide du compteur ci-dessous (cliquer sur + ou -). Si aucun des groupes ne repondent à votre question, essayez de la formuler autrement.")
+            number_of_sub_df = st.number_input("Compteur",min_value=1,max_value=len(sub_df_list)//10+1)
+            if number_of_sub_df == len(sub_df_list)//10+1:
+                text_utile = extract(sub_df_list[10*(number_of_sub_df-1):])
+                print(str(10*(number_of_sub_df-1)) + "->" + str(len(sub_df_list)))
+                
+            elif number_of_sub_df == 1:
+                text_utile = extract(sub_df_list[:9])
+                print( "0 -> 9")
+                
+            else:
+                text_utile = extract(sub_df_list[10*(number_of_sub_df-1):10*number_of_sub_df])
+                print(str(10*(number_of_sub_df-1)) + "->" + str(10*number_of_sub_df))
+                
+            
+            
+           
+            
+        
         
         
         
