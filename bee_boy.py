@@ -72,7 +72,7 @@ def df_to_list(df):
 def main():
     
     
-    
+    st.set_page_config(page_title="beeboy",layout="wide",initial_sidebar_state='collapsed')
 
     sub_df = pd.DataFrame({})
     image = Image.open('Boy-removebg-preview.png')
@@ -213,7 +213,7 @@ def main():
             )
 
             # Affichez le graphique dans Streamlit
-            st.plotly_chart(fig)
+            st.plotly_chart(fig,use_container_width=True)
 
             
             # Calculez les pourcentages pour chaque avis
@@ -235,7 +235,7 @@ def main():
             fig.update_layout(yaxis_tickformat='%')
 
             # Affichez le graphique dans Streamlit
-            st.plotly_chart(fig)
+            st.plotly_chart(fig,use_container_width=True)
 
 
             # Créez le graphique avec Plotly graph_objects
@@ -246,7 +246,7 @@ def main():
             fig.update_layout(title="Distribution des avis", xaxis_title="Index", yaxis_title="Avis")
 
             # Affichez le graphique dans Streamlit
-            st.plotly_chart(fig)
+            st.plotly_chart(fig,use_container_width=True)
 
 
 
