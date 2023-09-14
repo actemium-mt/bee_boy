@@ -5,3 +5,4 @@ streamlit-chat
 openpyxl
 st-star-rating
 joblib
+xlsxwriter
