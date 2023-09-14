@@ -7,3 +7,4 @@ openpyxl
 st-star-rating
 joblib
 xlsxwriter
+plotly==5.10.0
