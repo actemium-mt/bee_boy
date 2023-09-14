@@ -1,8 +1,9 @@
-pandas
+#pandas
+pandas==1.4.4
 fuzzywuzzy
 openai
 streamlit-chat
 openpyxl
 st-star-rating
 joblib
-xlsxwriter
+#xlsxwriter
