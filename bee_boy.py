@@ -8,6 +8,8 @@ from PIL import Image
 import csv
 from joblib import *
 from io import BytesIO
+import plotly.express as px
+import plotly.graph_objects as go
 #testmerge
 
 def get_completion(prompt):
@@ -70,7 +72,7 @@ def df_to_list(df):
 def main():
     
     
-    
+    st.set_page_config(page_title="beeboy",layout="wide",initial_sidebar_state='collapsed')
 
     sub_df = pd.DataFrame({})
     image = Image.open('Boy-removebg-preview.png')
@@ -188,6 +190,67 @@ def main():
                     j=j+1
         else:
             st.write(df_commentaire) 
+            df = df_commentaire
+            col1,col2 = st.columns(2)
+            positive_rate = len(df[df["Avis"].isin([4, 5])]) / len(df) * 100
+            col1.metric("Pourcentage d'avis positifs[4,5]", f"{positive_rate:.2f}%")
+            negative_rate = len(df[df["Avis"].isin([1, 2])]) / len(df) * 100
+            col2.metric("Pourcentage d'avis négatifs[1,2]", f"{negative_rate:.2f}%")
+
+            # Calculez les pourcentages pour chaque avis
+            avis_counts = df['Avis'].value_counts(normalize=True) * 100
+
+            # Palette de couleurs
+            colors = {1: 'red', 2: 'orange', 3: 'yellow', 4: 'lightgreen', 5: 'green'}
+
+            # Créez le graphique camembert avec Plotly
+            fig = px.pie(
+                names=avis_counts.index,
+                values=avis_counts.values,
+                title="Répartition des avis en pourcentage",
+                color=avis_counts.index.map(colors),  # Map avis values to colors
+                color_discrete_map=colors
+            )
+
+            # Affichez le graphique dans Streamlit
+            st.plotly_chart(fig,use_container_width=True)
+
+            
+            # Calculez les pourcentages pour chaque avis
+            avis_counts = df['Avis'].value_counts(normalize=True)
+
+            # Palette de couleurs
+            colors = {1: 'red', 2: 'orange', 3: 'yellow', 4: 'lightgreen', 5: 'green'}
+            # Créez le graphique avec Plotly
+            fig = px.bar(
+                x=avis_counts.index,
+                y=avis_counts.values,
+                color=avis_counts.index.map(colors),  # Map avis values to colors
+                labels={'x': 'Avis', 'y': 'Pourcentage'},
+                title="Répartition des avis en pourcentage",
+                color_discrete_map=colors
+            )
+
+            # Ajustez les détails du graphique
+            fig.update_layout(yaxis_tickformat='%')
+
+            # Affichez le graphique dans Streamlit
+            st.plotly_chart(fig,use_container_width=True)
+
+
+            # Créez le graphique avec Plotly graph_objects
+            fig = go.Figure()
+            fig.add_trace(go.Scatter(x=df.index, y=df['Avis'], mode='lines+markers', name='Avis'))
+
+            # Ajoutez des titres et des labels
+            fig.update_layout(title="Distribution des avis", xaxis_title="Index", yaxis_title="Avis")
+
+            # Affichez le graphique dans Streamlit
+            st.plotly_chart(fig,use_container_width=True)
+
+
+
+
             # download button 2 to download dataframe as xlsx
             buffer = BytesIO()
             with pd.ExcelWriter(buffer,engine='xlsxwriter') as writer:
