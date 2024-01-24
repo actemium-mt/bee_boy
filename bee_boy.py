@@ -13,7 +13,8 @@ import plotly.graph_objects as go
 #testmerge
 
 def get_completion(prompt):
-    response = openai.Completion.create(
+
+    response = openai.completions.create(
         model="gpt-3.5-turbo-instruct",
         prompt=prompt,
         temperature=0.9,
